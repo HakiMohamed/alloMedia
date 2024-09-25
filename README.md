@@ -71,3 +71,4 @@ JWT pour l’authentification : Pour sécuriser les sessions utilisateurs.
 2FA pour sécuriser les connexions : Intégration d'une authentification à deux facteurs.
 RESTful API : Pour gérer les requêtes HTTP et les opérations CRUD.
 Tests unitaires : Utilisation de Jest ou Mocha pour garantir la robustesse de l'application.
+
