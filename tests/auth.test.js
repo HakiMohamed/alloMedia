@@ -4,7 +4,6 @@ const User = require('../models/user');
 const mongoose = require('mongoose');
 
 describe('Authentication Tests', () => {
-  
   beforeAll(async () => {
     await mongoose.connect(process.env.MONGO_URI, {
       useNewUrlParser: true,
@@ -68,3 +67,58 @@ describe('Authentication Tests', () => {
       expect(res.body.errors).toHaveLength(3); 
     });
   });
+
+  describe('POST /api/login', () => {
+    it('should login a user with valid credentials', async () => {
+      await request(app)
+        .post('/api/register')
+        .send({
+          name: 'Jane Doe',
+          email: 'jane@example.com',
+          password: 'password123',
+        });
+
+      const res = await request(app)
+        .post('/api/login')
+        .send({
+          email: 'jane@example.com',
+          password: 'password123',
+        });
+
+      expect(res.statusCode).toEqual(200); 
+      expect(res.body).toHaveProperty('token'); 
+    });
+
+    it('should not login a user with incorrect password', async () => {
+      await request(app)
+        .post('/api/register')
+        .send({
+          name: 'Jane Doe',
+          email: 'jane@example.com',
+          password: 'password123',
+        });
+
+      const res = await request(app)
+        .post('/api/login')
+        .send({
+          email: 'jane@example.com',
+          password: 'wrongpassword',
+        });
+
+      expect(res.statusCode).toEqual(401); 
+      expect(res.body).toHaveProperty('message', 'Invalid credentials');
+    });
+
+    it('should return an error for non-existing user', async () => {
+      const res = await request(app)
+        .post('/api/login')
+        .send({
+          email: 'nonexistent@example.com',
+          password: 'password123',
+        });
+
+      expect(res.statusCode).toEqual(401); 
+      expect(res.body).toHaveProperty('message', 'Invalid credentials');
+    });
+  });
+});
