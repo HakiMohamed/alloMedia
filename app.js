@@ -9,7 +9,8 @@ const webRoutes = require("./routes/web");
 
 const app = express();
 
-// middlewares  
+
+
 app.use(express.json());
 app.use(express.static("public"));
 app.use("/", webRoutes);
