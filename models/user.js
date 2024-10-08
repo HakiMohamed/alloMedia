@@ -1,10 +1,11 @@
-const bcrypt = require('bcryptjs');
 const mongoose = require('mongoose');
 
 const userSchema = new mongoose.Schema({
   name: { type: String, required: true },
   email: { type: String, required: true, unique: true },
-  password: { type: String, required: true },
+  password: { type: String, required: true },  
+  phoneNumber: { type: String, unique: true, sparse: true }, 
+  otp: { type: String }, 
   roles: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Role'
@@ -12,19 +13,17 @@ const userSchema = new mongoose.Schema({
   permissions: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Permission'
-  }]
-}, { timestamps: true });
-
-userSchema.pre('save', async function(next) {
-  if (!this.isModified('password')) return next();
-  
-  try {
-    const salt = await bcrypt.genSalt(10);
-    this.password = await bcrypt.hash(this.password, salt);
-    next();
-  } catch (err) {
-    return next(err);
-  }
-});
+  }],
+  isVerified: { type: Boolean, default: false },
+  devices: [
+    {
+      ipAddress: String,  
+      userAgent: String,
+      isVerified: { type: Boolean, default: false },
+      loginAt: { type: Date, default: Date.now }
+    }
+  ],
+}, 
+{ timestamps: true });
 
 module.exports = mongoose.model('User', userSchema);
