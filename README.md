@@ -153,8 +153,8 @@ Ensure the following are installed on your machine:
 | POST        | `/api/register`              | Registers a new user.                                        |
 | POST        | `/api/login`                 | Logs in the user and returns a JWT token.                   |
 | POST        | `/api/request-reset-password`        | Sends a password reset link to the user's email.            |
-| POST        | `/api/reset-password/:token` | Resets the user's password using a token.                   |
-| POST        | `/api//verify-device` | Send Otp in email for verifiy user devices.                   |
+| GET        | `/api/reset-password/:token` | Resets the user's password using a token.                   |
+| POST        | `/api/verify-device` | Send Otp in email for verifiy user devices.                   |
 | POST        | `/api/resend-otp` | Re Send Otp in email for verifiy user devices 
 |
 
