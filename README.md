@@ -154,7 +154,9 @@ Ensure the following are installed on your machine:
 | POST        | `/api/login`                 | Logs in the user and returns a JWT token.                   |
 | POST        | `/api/request-reset-password`        | Sends a password reset link to the user's email.            |
 | POST        | `/api/reset-password/:token` | Resets the user's password using a token.                   |
-| GET        | `/api/verify-email/:token` | Get Token from Get url for use it to verifiy email.                   |
+| POST        | `/api//verify-device` | Send Otp in email for verifiy user devices.                   |
+| POST        | `/api/resend-otp` | Re Send Otp in email for verifiy user devices 
+|
 
 
 
@@ -175,13 +177,6 @@ The User model in MongoDB includes:
 
 ## Contributing
 Contributions are welcome! Feel free to fork the repository, make your changes, and submit a pull request.
-
-## License
-This project is licensed under the MIT License. See the LICENSE file for more details.
-
-## Acknowledgments
-Special thanks to the AlloMedia team and the MERN Stack community for their continuous support.
-
 
 
 
