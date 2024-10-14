@@ -11,6 +11,8 @@ const { addRole, assignPermissionsToRole } = require('../controllers/roleControl
 const { addPermission } = require('../controllers/permissionController');
 const { assignRolesToUser } = require('../controllers/userController');
 const { verifyOtp,sendOtp } = require('../controllers/otpController'); 
+const { getUserProfile } = require('../controllers/profileController');
+
 
 /**
  * @swagger
@@ -403,6 +405,15 @@ router.post('/users/assign-roles', assignRolesToUser);
  */
 router.post('/verify-device', verifyOtp);
 router.post('/resend-otp', sendOtp);
+
+router.get('/profile', getUserProfile);
+
+
+
+
+
+
+
 
 
 module.exports = router;

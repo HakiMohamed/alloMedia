@@ -6,7 +6,6 @@ const {sendOtpEmail } = require('../services/emailService');
 const verifyOtp = async (req, res) => {
   const { email, otp } = req.body;
   
-  const ipAddress = req.ip;
   const userAgent = req.headers['user-agent'];
 
   try {
@@ -21,7 +20,7 @@ const verifyOtp = async (req, res) => {
     }
 
     const deviceIndex = user.devices.findIndex(
-      (device) => device.ipAddress === ipAddress && device.userAgent === userAgent
+      (device) =>  device.userAgent === userAgent
     );
 
     if (deviceIndex === -1) {
@@ -43,7 +42,7 @@ const verifyOtp = async (req, res) => {
 
 const sendOtp = async (req, res) => {
   try {
-    const { email } = req.body; // Get the email from the request body
+    const { email } = req.body; 
     const user = await User.findOne({ email });
 
     if (!user) {

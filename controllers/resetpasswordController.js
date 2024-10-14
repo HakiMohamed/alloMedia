@@ -20,7 +20,6 @@ const requestPasswordReset = async (req, res) => {
       { expiresIn: '15m' } 
     );
 
-    // Send reset email with the token
     const resetUrl = `${process.env.APP_HOST}${process.env.APP_FRENT_PORT}/reset-password?token=${token}`;
     await sendResetPasswordEmail(user.email, user.name, resetUrl);
 
@@ -39,7 +38,6 @@ const resetPassword = async (req, res) => {
   }
 
   try {
-    // Verify the token and its expiration
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
     const user = await User.findOne({ _id: decoded.id });

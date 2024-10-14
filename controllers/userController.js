@@ -3,7 +3,6 @@ const Role = require('../models/role');
 const Permission = require('../models/permission');  // Modèle des permissions
 
 
-// Assign roles to a user
 const assignRolesToUser = async (req, res) => {
   const { userId, roles } = req.body;
 
@@ -60,6 +59,9 @@ const assignPermissionToUser = async (req, res) => {
       return res.status(500).json({ message: 'Server error' });
     }
   };
+
+
+  
 
 module.exports = {
   assignPermissionToUser,

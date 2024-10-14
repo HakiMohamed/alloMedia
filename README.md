@@ -1,42 +1,43 @@
+# Structure du projet alloMedia
+
+```bash
 alloMedia/
 │
 ├── src/
 │   ├── config/               # Fichiers de configuration (environnement, connexions)
 │   │   ├── db.js             # Configuration de la base de données MongoDB
 │   │   ├── dotenv.js         # Chargement des variables d'environnement
-│   │   └── nodemailer.js      # Configuration de Nodemailer pour l'envoi d'e-mails
+│   │   └── nodemailer.js     # Configuration de Nodemailer pour l'envoi d'e-mails
 │   │
 │   ├── controllers/          # Contrôleurs pour gérer la logique des routes
 │   │   ├── authController.js  # Gestion des opérations d'authentification
-│   │   ├── userController.js   # Gestion des utilisateurs (CRUD)
-│   │   └── orderController.js  # Gestion des commandes (CRUD)
+│   │   ├── userController.js  # Gestion des utilisateurs (CRUD)
+│   │   └── orderController.js # Gestion des commandes (CRUD)
 │   │
 │   ├── models/               # Modèles de données Mongoose
 │   │   ├── User.js           # Modèle de l'utilisateur
-│   │   ├── Order.js          # Modèle des commandes
-│   │   └── Product.js        # Modèle des produits (si nécessaire)
 │   │
 │   ├── routes/               # Fichiers de définition des routes
-│   │   ├── authRoutes.js      # Routes pour l'authentification
-│   │   ├── userRoutes.js      # Routes pour les utilisateurs
-│   │   └── orderRoutes.js     # Routes pour les commandes
+│   │   ├── authRoutes.js     # Routes pour l'authentification
+│   │   ├── userRoutes.js     # Routes pour les utilisateurs
+│   │   └── orderRoutes.js    # Routes pour les commandes
 │   │
 │   ├── services/             # Services pour la logique métier
-│   │   ├── authService.js      # Logique d'authentification et 2FA
-│   │   └── userService.js      # Logique de gestion des utilisateurs
+│   │   ├── authService.js    # Logique d'authentification et 2FA
+│   │   └── userService.js    # Logique de gestion des utilisateurs
 │   │
 │   ├── middleware/           # Middleware pour la gestion des requêtes
-│   │   ├── authMiddleware.js   # Middleware pour vérifier les JWT
-│   │   └── errorMiddleware.js  # Middleware pour gérer les erreurs
+│   │   ├── authMiddleware.js # Middleware pour vérifier les JWT
+│   │   └── errorMiddleware.js # Middleware pour gérer les erreurs
 │   │
-│   ├── utils/                # Utilitaires divers (par exemple, validation, gestion des erreurs)
-│   │   ├── emailUtils.js      # Fonctionnalités liées à l'envoi d'e-mails
-│   │   └── otpUtils.js        # Fonctionnalités liées à l'OTP
+│   ├── utils/                # Utilitaires divers (validation, gestion des erreurs)
+│   │   ├── emailUtils.js     # Fonctionnalités liées à l'envoi d'e-mails
+│   │   └── otpUtils.js       # Fonctionnalités liées à l'OTP
 │   │
 │   ├── tests/                # Tests unitaires
-│   │   ├── auth.test.js       # Tests pour l'authentification
-│   │   ├── user.test.js       # Tests pour les utilisateurs
-│   │   └── order.test.js      # Tests pour les commandes
+│   │   ├── auth.test.js      # Tests pour l'authentification
+│   │   ├── user.test.js      # Tests pour les utilisateurs
+│   │   └── order.test.js     # Tests pour les commandes
 │   │
 │   └── server.js             # Fichier principal pour démarrer le serveur Express
 │
@@ -44,6 +45,7 @@ alloMedia/
 ├── .gitignore                 # Fichiers à ignorer par Git
 ├── package.json               # Fichier de configuration de npm
 └── README.md                  # Documentation du projet
+```
 
 
 Explications des dossiers et fichiers :
