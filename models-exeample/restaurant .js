@@ -3,11 +3,14 @@ const mongoose = require('mongoose');
 const restaurantSchema = new mongoose.Schema({
   name: { type: String, required: true },
   address: { type: String, required: true },
+  logo : {type: String},
+  cover : {type: String},
+  pictures : [{type: String}],
   manager: { 
     type: mongoose.Schema.Types.ObjectId, 
     ref: 'User', // Le manager est un utilisateur
     required: true
-  },
+  },  
   menuItems: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'MenuItem' // Référence aux articles du menu
