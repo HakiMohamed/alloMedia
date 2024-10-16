@@ -5,60 +5,43 @@ const {sendOtpEmail } = require('../services/emailService');
 
 const verifyOtp = async (req, res) => {
   const { email, otp } = req.body;
-  
-  const userAgent = req.headers['user-agent'];
-
   try {
     const user = await User.findOne({ email });
-
     if (!user) {
-      return res.status(400).json({ message: 'Utilisateur non trouvé' });
+      return res.status(404).json({ message: 'User not found' });
     }
-
     if (user.otp !== otp) {
       return res.status(400).json({ message: 'OTP invalide' });
     }
-
-    const deviceIndex = user.devices.findIndex(
-      (device) =>  device.userAgent === userAgent
-    );
-
-    if (deviceIndex === -1) {
-      return res.status(400).json({ message: 'Appareil non trouvé' });
+    const device = user.devices.find(d => d.userAgent === req.headers['user-agent']);
+    if (device) {
+      device.isVerified = true;
     }
-
-    user.devices[deviceIndex].isVerified = true;
-    user.otp = undefined;  
+    user.otp = null;
     await user.save();
-
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
-
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '48h' });
     return res.status(200).json({ message: 'Appareil vérifié avec succès', token });
   } catch (error) {
-    console.error('Erreur lors de la vérification de l\'OTP:', error);
-    return res.status(500).json({ message: 'Erreur serveur' });
+    console.error('Error verifying OTP:', error);
+    return res.status(500).json({ message: 'Server error' });
   }
 };
 
 const sendOtp = async (req, res) => {
+  const { email } = req.body;
   try {
-    const { email } = req.body; 
     const user = await User.findOne({ email });
-
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
-
     const otp = generateOtp();
-    const name = 'Sir';
-    await sendOtpEmail(user.email, name, otp);
     user.otp = otp;
-
     await user.save();
-
+    await sendOtpEmail(user.email, user.name, otp);
     return res.status(200).json({ message: 'OTP sent successfully' });
   } catch (error) {
-    return res.status(500).json({ message: 'Error sending OTP', error });
+    console.error('Error sending OTP:', error);
+    return res.status(500).json({ message: 'Server error' });
   }
 };
 

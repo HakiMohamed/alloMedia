@@ -1,38 +1,17 @@
-
-version: "3.8"
+version: '3.8'
 
 services:
-  app:
-    build: 
-      context: .
+  backend:
+    build:
+      context: .  
       dockerfile: Dockerfile
     ports:
-      - "8000:8000"
-    depends_on:
-      - mongo
+      - "8000:8000"  
     environment:
-      - MONGO_URI=mongodb://root:example@mongo:27017/AlloMedia?authSource=admin
+      - MONGO_URI=${MONGO_URI}  
     volumes:
-      - .:/app
-    networks:
-      - app-network
-
-  mongo:
-    image: mongo:latest
-    container_name: mongo_container
-    ports:
-      - "27017:27017"
-    environment:
-      - MONGO_INITDB_ROOT_USERNAME=root
-      - MONGO_INITDB_ROOT_PASSWORD=example
-    volumes:
-      - mongo_data:/data/db
-    networks:
-      - app-network
-
-volumes:
-  mongo_data:
-    driver: local
+      - .:/app  
+      - /app/node_modules  
 
 networks:
   app-network:

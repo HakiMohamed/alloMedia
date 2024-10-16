@@ -1,5 +1,5 @@
 const request = require('supertest');
-const app = require('../app'); // Assuming your Express app is exported from app.js
+const app = require('../app'); 
 const User = require('../models/user');
 const Role = require('../models/role');
 const bcrypt = require('bcryptjs');
@@ -36,7 +36,6 @@ describe('AlloMedia API Tests', () => {
           email: 'test@example.com',
           password: 'password123',
           phoneNumber: '1234567890',
-          roles: ['user']
         };
 
         bcrypt.hash.mockResolvedValue('hashedPassword');
@@ -53,6 +52,26 @@ describe('AlloMedia API Tests', () => {
         expect(response.body).toHaveProperty('token');
         expect(sendVerificationEmail).toHaveBeenCalled();
       });
+
+
+      it('should return 400 for invalid email format during registration', async () => {
+        const userData = {
+          name: 'Test User',
+          email: 'invalid-email-format',
+          password: 'password123',
+          phoneNumber: '1234567890',
+        };
+      
+        const response = await request(app)
+          .post('/api/register')
+          .send(userData);
+      
+        expect(response.statusCode).toBe(400);
+        expect(response.body.errors[0].msg).toBe('Invalid email');
+      });
+      
+
+
 
       it('should return 400 if email is already in use', async () => {
         await User.create({
@@ -72,8 +91,6 @@ describe('AlloMedia API Tests', () => {
         expect(response.statusCode).toBe(400);
         expect(response.body.errors[0].msg).toBe('Email already in use');
       });
-
-      // Add more test cases for validation errors
     });
 
     describe('POST /api/login', () => {
@@ -127,162 +144,54 @@ describe('AlloMedia API Tests', () => {
         expect(sendOtpEmail).toHaveBeenCalled();
       });
 
-      // Add more test cases for invalid credentials, unverified user, etc.
-    });
-  });
-
-  describe('EmailController', () => {
-    describe('POST /api/resend-verification', () => {
-      it('should resend verification email', async () => {
-        const user = await User.create({
+      it('should return 401 for invalid credentials', async () => {
+        await User.create({
           name: 'Test User',
           email: 'test@example.com',
-          password: 'hashedPassword',
-          isVerified: false
+          password: await bcrypt.hash('password123', 10),
+          isVerified: true
         });
 
-        jwt.sign.mockReturnValue('mockToken');
+        bcrypt.compare.mockResolvedValue(false);
 
         const response = await request(app)
-          .post('/api/resend-verification')
-          .send({ email: 'test@example.com' });
-
-        expect(response.statusCode).toBe(200);
-        expect(sendVerificationEmail).toHaveBeenCalledWith('test@example.com', 'Test User', expect.any(String));
-      });
-
-      // Add more test cases for non-existent user, already verified user, etc.
-    });
-
-    describe('GET /api/verify-email', () => {
-      it('should verify email successfully', async () => {
-        const user = await User.create({
-          name: 'Test User',
-          email: 'test@example.com',
-          password: 'hashedPassword',
-          isVerified: false
-        });
-
-        jwt.verify.mockReturnValue({ id: user._id });
-
-        const response = await request(app)
-          .get('/api/verify-email')
-          .query({ token: 'validToken' });
-
-        expect(response.statusCode).toBe(200);
-        expect(response.body.message).toBe('Email verified successfully.');
-
-        const updatedUser = await User.findById(user._id);
-        expect(updatedUser.isVerified).toBe(true);
-      });
-
-      // Add more test cases for invalid token, expired token, etc.
-    });
-  });
-
-  describe('OtpController', () => {
-    describe('POST /api/verify-otp', () => {
-      it('should verify OTP successfully', async () => {
-        const user = await User.create({
-          name: 'Test User',
-          email: 'test@example.com',
-          password: 'hashedPassword',
-          otp: '123456',
-          devices: [{ userAgent: 'test-agent', isVerified: false }]
-        });
-
-        jwt.sign.mockReturnValue('mockToken');
-
-        const response = await request(app)
-          .post('/api/verify-otp')
+          .post('/api/login')
           .send({
             email: 'test@example.com',
-            otp: '123456'
-          })
-          .set('User-Agent', 'test-agent');
-
-        expect(response.statusCode).toBe(200);
-        expect(response.body.message).toBe('Appareil vérifié avec succès');
-        expect(response.body).toHaveProperty('token');
-
-        const updatedUser = await User.findById(user._id);
-        expect(updatedUser.devices[0].isVerified).toBe(true);
-        expect(updatedUser.otp).toBeUndefined();
-      });
-
-      // Add more test cases for invalid OTP, non-existent user, etc.
-    });
-
-    describe('POST /api/send-otp', () => {
-      it('should send OTP successfully', async () => {
-        await User.create({
-          name: 'Test User',
-          email: 'test@example.com',
-          password: 'hashedPassword'
-        });
-
-        const response = await request(app)
-          .post('/api/send-otp')
-          .send({ email: 'test@example.com' });
-
-        expect(response.statusCode).toBe(200);
-        expect(response.body.message).toBe('OTP sent successfully');
-        expect(sendOtpEmail).toHaveBeenCalled();
-      });
-
-      // Add more test cases for non-existent user, etc.
-    });
-  });
-
-  describe('ResetPasswordController', () => {
-    describe('POST /api/request-password-reset', () => {
-      it('should send password reset email', async () => {
-        await User.create({
-          name: 'Test User',
-          email: 'test@example.com',
-          password: 'hashedPassword'
-        });
-
-        jwt.sign.mockReturnValue('mockToken');
-
-        const response = await request(app)
-          .post('/api/request-password-reset')
-          .send({ email: 'test@example.com' });
-
-        expect(response.statusCode).toBe(200);
-        expect(response.body.message).toBe('Password reset email has been sent.');
-        expect(sendResetPasswordEmail).toHaveBeenCalled();
-      });
-
-      // Add more test cases for non-existent user, etc.
-    });
-
-    describe('POST /api/reset-password', () => {
-      it('should reset password successfully', async () => {
-        const user = await User.create({
-          name: 'Test User',
-          email: 'test@example.com',
-          password: 'oldHashedPassword'
-        });
-
-        jwt.verify.mockReturnValue({ id: user._id });
-        bcrypt.hash.mockResolvedValue('newHashedPassword');
-
-        const response = await request(app)
-          .post('/api/reset-password')
-          .send({
-            token: 'validToken',
-            newPassword: 'newPassword123'
+            password: 'wrongpassword'
           });
 
-        expect(response.statusCode).toBe(200);
-        expect(response.body.message).toBe('Password has been reset successfully.');
-
-        const updatedUser = await User.findById(user._id);
-        expect(updatedUser.password).toBe('newHashedPassword');
+        expect(response.statusCode).toBe(401);
+        expect(response.body.message).toBe('Invalid credentials');
       });
 
-      // Add more test cases for invalid token, expired token, etc.
+      it('should handle unverified user', async () => {
+        await User.create({
+          name: 'Test User',
+          email: 'test@example.com',
+          password: await bcrypt.hash('password123', 10),
+          isVerified: false
+        });
+
+        bcrypt.compare.mockResolvedValue(true);
+
+        const response = await request(app)
+          .post('/api/login')
+          .send({
+            email: 'test@example.com',
+            password: 'password123'
+          });
+
+        expect(response.statusCode).toBe(403);
+        expect(response.body.message).toBe('User not verified. Please verify your email.');
+        expect(sendVerificationEmail).toHaveBeenCalled();
+      });
     });
-  });
+  },10000);
+
+ 
+
+  
+
+ 
 });

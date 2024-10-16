@@ -170,6 +170,8 @@ const login = async (req, res) => {
       device =>  device.userAgent === currentDevice.userAgent
     );
 
+   
+
     if (!existingDevice) {
       const otp = generateOtp();
       await sendOtpEmail(user.email, user.name, otp);
@@ -185,6 +187,7 @@ const login = async (req, res) => {
       return res.status(403).json({ message: 'New device detected. Please verify OTP.', device: currentDevice });
     }
 
+
     if (!existingDevice.isVerified) {
       const otp = generateOtp();
       await sendOtpEmail(user.email, user.name, otp);
@@ -192,11 +195,13 @@ const login = async (req, res) => {
 
       await user.save();
 
-      return res.status(403).json({ message: 'Device not verified. Please verify OTP.', device: currentDevice });
+      return res.status(403).json({ message: 'New device detected. Please verify OTP..', device: currentDevice });
     }
 
+   
+
     if (!process.env.JWT_SECRET) {
-      return res.status(500).json({ message: 'JWT_SECRET is not defined in environment variables' });
+      console.log('JWT_SECRET is not defined in environment variables' );
     }
 
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '48h' });
