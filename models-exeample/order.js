@@ -1,33 +1,42 @@
 const mongoose = require('mongoose');
 
 const orderSchema = new mongoose.Schema({
-  clientId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User', // Référence au client qui passe la commande
-    required: true
+  clientId: { 
+    type: mongoose.Schema.Types.ObjectId, 
+    ref: 'User', 
+    required: true // Référence à l'utilisateur qui a passé la commande
   },
-  restaurantId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Restaurant', // Référence au restaurant où la commande est passée
-    required: true
+  restaurantId: { 
+    type: mongoose.Schema.Types.ObjectId, 
+    ref: 'Restaurant', 
+    required: true // Référence au restaurant où la commande est passée
   },
   items: [{
-    menuItem: { type: Schema.Types.ObjectId, ref: 'MenuItem' },
-    quantity: { type: Number, required: true }
+    menuItem: { 
+      type: mongoose.Schema.Types.ObjectId, 
+      ref: 'MenuItem' // Référence à l'article de menu commandé
+    },
+    quantity: { 
+      type: Number, 
+      required: true // Quantité de cet article commandé
+    }
   }],
-  status: {
-    type: String,
-    status: { type: String, enum: ['pending', 'accepted', 'preparing', 'readyForPickup', 'pickedUp', 'delivered', 'cancelled'], default: 'pending' },
-    default: 'pending'
+  status: { 
+    type: String, 
+    enum: ['pending', 'accepted', 'preparing', 'readyForPickup', 'pickedUp', 'delivered', 'cancelled'], 
+    default: 'pending' // Statut actuel de la commande
   },
-  totalPrice: { type: Number, required: true }, // Calculé à partir des prix des articles du menu
-  deliveryId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Delivery' // Référence à la livraison (si applicable)
+  totalPrice: { 
+    type: Number, 
+    required: true // Prix total de la commande
   },
-
-  ConfirmedSecret:{ type: String }, // like Otp For livraison confirmation 
-
+  deliveryId: { 
+    type: mongoose.Schema.Types.ObjectId, 
+    ref: 'Delivery' // Référence à la livraison associée (si applicable)
+  },
+  confirmedSecret: { 
+    type: String // Code de confirmation pour valider que client a bien recupirer leur demande
+  }
 }, { timestamps: true });
 
 module.exports = mongoose.model('Order', orderSchema);
